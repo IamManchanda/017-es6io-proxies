@@ -3,20 +3,13 @@
  */
 
 /* eslint-disable */
-const person = {
-  name: 'Harry',
-  age: 100,
-};
-
-const personProxy = new Proxy(person, {
-  get(target, name) {
-    return target[name].toUpperCase();
-  },
+const phoneHandler = {
   set(target, name, value) {
-    if (typeof value === 'string') {
-      target[name] = value.trim();
-    }
+    target[name] = value.match(/[0-9]/g).join('');
+  },
+  get(target, name) {
+    return target[name].replace(/(\d{3})(\d{3})(\d{4})/, '($1)-$2-$3');
   }
-});
+}
 
-personProxy.name = 'Harman';
+const phoneNumbers = new Proxy({}, phoneHandler);
