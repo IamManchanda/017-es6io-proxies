@@ -3,13 +3,20 @@
  */
 
 /* eslint-disable */
-const phoneHandler = {
+const safeHandler = {
   set(target, name, value) {
-    target[name] = value.match(/[0-9]/g).join('');
-  },
-  get(target, name) {
-    return target[name].replace(/(\d{3})(\d{3})(\d{4})/, '($1)-$2-$3');
-  }
-}
+    const likeKey = Object
+                  .keys(target)
+                  .find(k => k.toLowerCase() === name.toLowerCase());
 
-const phoneNumbers = new Proxy({}, phoneHandler);
+    if (!(name in target) && likeKey) {
+      throw new Error(`Oops! Looks like we already have a(n) ${name} property but with the case of ${likeKey}`);
+    }
+
+    target[name] = value;
+  }
+};
+
+const safety = new Proxy({ id: 100 }, safeHandler);
+
+safety.ID = 200;
